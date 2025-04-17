@@ -29,12 +29,16 @@ import StepWizard from './StepWizard';
 import Dashboard from './Dashboard';
 import BienvenidaMiembro from './BienvenidaMiembro';
 import Miembros from './Miembros';
+import Login from './Login';
+import { requireAuth } from './auth';
 
 function Landing() {
   const navigate = useNavigate();
-  const handleCrearComunidad = (e) => {
+  const handleCrearComunidad = async (e) => {
     e.preventDefault();
-    navigate('/crear-comunidad');
+    // Si no está autenticado, redirige a login y luego vuelve
+    const ok = await requireAuth(navigate, '/crear-comunidad');
+    if (ok) navigate('/crear-comunidad');
   };
   return (
     <>
@@ -234,6 +238,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/crear-comunidad" element={<StepWizard />} />
         <Route path="/miembros/:id" element={<Miembros />} />
         <Route path="/dashboard" element={<Dashboard />} />

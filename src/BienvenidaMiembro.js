@@ -1,9 +1,13 @@
 import React from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { requireAuth } from './auth';
+import { supabase } from './supabaseClient';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
+
+import { useEffect } from 'react';
 
 export default function BienvenidaMiembro() {
   const navigate = useNavigate();
@@ -15,19 +19,42 @@ export default function BienvenidaMiembro() {
   // Mejor fallback: si no está en la query, muestra 'El organizador/a'
   const nombrePadre = query.get('nombrePadre') || localStorage.getItem('nombrePadre') || 'El organizador/a';
 
-  const handleUnirme = () => {
-    // Lleva al StepWizard en paso 2, pasando los datos de la comunidad
-    navigate('/crear-comunidad', {
-      state: {
-        pasoInicial: 2,
-        institucion,
-        sala,
-        division,
-        nombrePadre,
-        desdeInvitacion: true
-      }
-    });
+
+
+  const handleUnirme = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      // Redirige a login y guarda la ruta y parámetros originales
+      navigate('/login', {
+        state: {
+          from: {
+            pathname: '/crear-comunidad',
+            state: {
+              pasoInicial: 2,
+              institucion,
+              sala,
+              division,
+              nombrePadre,
+              desdeInvitacion: true
+            }
+          }
+        }
+      });
+    } else {
+      navigate('/crear-comunidad', {
+        state: {
+          pasoInicial: 2,
+          institucion,
+          sala,
+          division,
+          nombrePadre,
+          desdeInvitacion: true
+        }
+      });
+    }
   };
+
+
 
   return (
     <div style={{ minHeight: '100vh', background: 'linear-gradient(90deg, #6366f1 0%, #3b82f6 100%)' }}>
