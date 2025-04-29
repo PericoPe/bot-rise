@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { footerLinks } from './footerTexts';
 
 const opcionesComunidad = [
   'Padres & Madres',
@@ -22,6 +23,18 @@ function generarIdUnico({ institucion, sala, division }) {
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function StepWizard({ onFinish }) {
+  // Comic art: Hey-Jack superhéroe
+  const heyJackEmoji = "🦸‍♂️";
+  const comicBubble = (text, color='#f59e0b') => (
+    <div style={{ background: '#fffbe7', borderRadius: 18, boxShadow: '0 2px 12px rgba(245,158,11,0.10)', padding: '14px 20px', marginBottom: 18, color, fontWeight: 700, fontSize: 17, border: `2px solid ${color}`, position: 'relative' }}>
+      <span style={{ position: 'absolute', left: -14, top: 6, fontSize: 28 }}>🗨️</span>
+      {text}
+    </div>
+  );
+  // Barra de progreso visual
+  // ...
+  // (sin cambios)
+
   // Barra de progreso visual
   window.StepWizardProgress = function StepWizardProgress() {
     const [step, setStep] = React.useState(1);
@@ -32,26 +45,28 @@ export default function StepWizard({ onFinish }) {
       window.addEventListener('stepwizard-step', handler);
       return () => window.removeEventListener('stepwizard-step', handler);
     }, []);
+    // Íconos nuevos, vibrantes y alineados al branding Hey-Jack
     const steps = [
-      { icon: '🎓', label: 'Comunidad', color: '#6366f1' },
-      { icon: '👤', label: 'Tus datos', color: '#3b82f6' },
-      { icon: '🔗', label: 'Invitar', color: '#10b981' },
-      { icon: '🎉', label: '¡Listo!', color: '#f59e0b' },
-    ];
+      { icon: '🦸‍♂️', label: 'Hey-Jack', color: '#f59e0b', bg: 'linear-gradient(135deg,#f59e0b 0%,#6366f1 100%)' }, // superhéroe
+      { icon: '🤝', label: 'Comunidad', color: '#10b981', bg: 'linear-gradient(135deg,#10b981 0%,#3b82f6 100%)' }, // comunidad
+      { icon: '💬', label: 'WhatsApp', color: '#25D366', bg: 'linear-gradient(135deg,#25D366 0%,#6366f1 100%)' }, // WhatsApp
+      { icon: '🎊', label: '¡Listo!', color: '#6366f1', bg: 'linear-gradient(135deg,#6366f1 0%,#f59e0b 100%)' }, // celebración
+    ];  
     return (
       <div style={{ display: 'flex', justifyContent: 'center', gap: 10, marginBottom: 32 }}>
         {steps.map((s, i) => (
           <div key={i} style={{ textAlign: 'center', flex: 1 }}>
             <div style={{
-              width: 44, height: 44, borderRadius: '50%',
-              background: step === i + 1 ? s.color : '#e0e7ef',
-              color: '#fff',
-              fontSize: 26, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto',
-              boxShadow: step === i + 1 ? '0 2px 12px rgba(99,102,241,0.10)' : 'none',
-              border: step === i + 1 ? '2px solid #6366f1' : '2px solid #e0e7ef',
+              width: 54, height: 54, borderRadius: '50%',
+              background: step === i + 1 ? s.bg : '#e0e7ef',
+              color: step === i + 1 ? '#fff' : '#b4b4b4',
+              fontSize: 32, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto',
+              boxShadow: step === i + 1 ? '0 4px 14px rgba(99,102,241,0.13)' : 'none',
+              border: step === i + 1 ? '3px solid #f59e0b' : '2px solid #e0e7ef',
               transition: 'all .2s',
+              outline: step === i + 1 ? '3px solid #ffe082' : 'none',
             }}>{s.icon}</div>
-            <div style={{ fontSize: 13, color: step === i + 1 ? s.color : '#64748b', fontWeight: step === i + 1 ? 700 : 500, marginTop: 4 }}>{s.label}</div>
+            <div style={{ fontSize: 15, color: step === i + 1 ? s.color : '#b4b4b4', fontWeight: step === i + 1 ? 900 : 500, marginTop: 8, letterSpacing: '-0.5px', textShadow: step === i + 1 ? '0 1px 6px #fffbe7' : 'none' }}>{s.label}</div>
           </div>
         ))}
       </div>
@@ -60,6 +75,7 @@ export default function StepWizard({ onFinish }) {
 
   const navigate = useNavigate();
   return (
+    <React.Fragment>
     <div style={{ minHeight: '100vh', background: '#f8fafc' }}>
       {/* Header fijo igual a landing */}
       <header style={{
@@ -130,18 +146,58 @@ export default function StepWizard({ onFinish }) {
         </div>
       </div>
     </div>
+  </React.Fragment>);
+}
+
+// FooterLegal: footer fijo con enlaces legales y modal
+function FooterLegal() {
+  const [modal, setModal] = useState(null);
+  return (
+    <>
+      <footer style={{
+        position: 'fixed', bottom: 0, left: 0, width: '100%', background: '#f8fafc', borderTop: '1px solid #e0e7ef',
+        display: 'flex', justifyContent: 'center', gap: 24, padding: '12px 0', zIndex: 500, fontSize: 15, color: '#6366f1',
+        boxShadow: '0 -2px 12px rgba(99,102,241,0.03)', flexWrap: 'wrap'
+      }}>
+        {footerLinks.map(link => (
+          <button
+            key={link.key}
+            onClick={() => setModal(link)}
+            style={{ background: 'none', border: 'none', color: '#6366f1', cursor: 'pointer', padding: 0, fontWeight: 600 }}
+          >
+            {link.label}
+          </button>
+        ))}
+      </footer>
+      {modal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(30,41,59,0.25)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999
+        }} onClick={() => setModal(null)}>
+          <div style={{
+            background: '#fff', borderRadius: 14, boxShadow: '0 8px 32px 0 rgba(99,102,241,0.16)',
+            padding: 32, maxWidth: 440, width: '90vw', position: 'relative', color: '#334155',
+            fontSize: 16, lineHeight: 1.6
+          }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ color: '#6366f1', fontWeight: 900, fontSize: 22, marginBottom: 16 }}>{modal.label}</h3>
+            <div style={{ whiteSpace: 'pre-line' }}>{modal.content}</div>
+            <button style={{ position: 'absolute', top: 10, right: 18, background: 'none', border: 'none', color: '#64748b', fontSize: 20, cursor: 'pointer' }} onClick={() => setModal(null)}>&#10005;</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 
 
 
 function StepWizardInner({ onFinish }) {
+  // Todos los hooks deben ir antes de cualquier return o condicional
   const navigate = useNavigate();
   const location = useLocation();
-  // Si viene desde invitación, inicializar con esos datos y saltar a paso 2
   const state = location.state || {};
   const desdeInvitacion = !!state.desdeInvitacion;
-  const [step, setStep] = useState(desdeInvitacion ? 2 : 1);
+  const [step, setStep] = useState(desdeInvitacion ? 2 : 1); // Si viene desde invitación, arranca en paso 2
   const [form, setForm] = useState({
     tipoComunidad: state.tipoComunidad || '',
     institucion: state.institucion || '',
@@ -149,7 +205,7 @@ function StepWizardInner({ onFinish }) {
     division: state.division || '',
     apodo: state.apodo || '',
     nombrePadre: state.nombrePadre || '',
-    nombreHijo: '',
+    nombreHijo: '', // este se completa por el usuario
     nacimiento: '',
     whatsapp: '',
     email: '',
@@ -161,70 +217,72 @@ function StepWizardInner({ onFinish }) {
   const [comunidadId, setComunidadId] = useState('');
   const [saveStatus, setSaveStatus] = useState({ success: null, error: null });
 
-  // Guardar en Supabase solo si es creación (no invitado) y finaliza
+  // Efecto para redirigir al dashboard al finalizar
   React.useEffect(() => {
-    if (finalizado && !desdeInvitacion && comunidadId) {
-      import('./supabaseClient').then(async ({ supabase }) => {
-        const { error } = await supabase.from('communities').insert([
-          {
-            id: comunidadId,
-            tipoComunidad: form.tipoComunidad,
-            institucion: form.institucion,
-            sala: form.sala,
-            division: form.division,
-            apodo: form.apodo,
-            nombrePadre: form.nombrePadre,
-            nombreHijo: form.nombreHijo,
-            nacimiento: form.nacimiento,
-            whatsapp: form.whatsapp,
-            email: form.email,
-            alias: form.alias,
-            monto: form.monto,
-            created_at: new Date().toISOString(),
-          }
-        ]);
-        if (error) {
-          setSaveStatus({ success: false, error: error.message });
-        } else {
-          setSaveStatus({ success: true, error: null });
-        }
-      });
-    }
-    // Redirige igual
     if (finalizado) {
       const to = setTimeout(() => navigate('/dashboard'), 2000);
       return () => clearTimeout(to);
     }
-  }, [finalizado, comunidadId]);
+  }, [finalizado]);
+
+  // Efecto para disparar evento de progreso
+  React.useEffect(() => {
+    if (step === 1 && !desdeInvitacion) {
+      window.dispatchEvent(new CustomEvent('stepwizard-step', { detail: { step: 1 } }));
+    } else if (step === 2) {
+      window.dispatchEvent(new CustomEvent('stepwizard-step', { detail: { step: 2 } }));
+    } else if (step === 3) {
+      window.dispatchEvent(new CustomEvent('stepwizard-step', { detail: { step: 3 } }));
+    }
+  }, [step, desdeInvitacion]);
+
+  // Efecto para generar link único en el paso 3
+  React.useEffect(() => {
+    if (step === 3 && !link) {
+      const comunidadId = generarIdUnico({
+        institucion: form.institucion,
+        sala: form.sala,
+        division: form.division
+      });
+      const url = `${window.location.origin}/comunidad/${comunidadId}`;
+      setLink(url);
+      setComunidadId(comunidadId);
+    }
+    // eslint-disable-next-line
+  }, [step, link, form.institucion, form.sala, form.division]);
+
+  // Utilidades visuales
+  const heyJackEmoji = "🦸‍♂️";
+  const comicBubble = (text, color='#f59e0b') => (
+    <div style={{ background: '#fffbe7', borderRadius: 18, boxShadow: '0 2px 12px rgba(245,158,11,0.10)', padding: '14px 20px', marginBottom: 18, color, fontWeight: 700, fontSize: 17, border: `2px solid ${color}`, position: 'relative' }}>
+      <span style={{ position: 'absolute', left: -14, top: 6, fontSize: 28 }}>🗨️</span>
+      {text}
+    </div>
+  );
 
   // Paso 4: Bienvenida y redirección
   if (finalizado) {
     return (
       <div style={{ ...estiloPaso, boxShadow: '0 8px 32px 0 rgba(99,102,241,0.16)', border: 'none', background: '#fff', position: 'relative', textAlign: 'center', padding: 32 }}>
-        <span style={{ fontSize: 54, color: '#f59e0b', marginBottom: 16 }}>🎉</span>
-        <h2 style={{ color: '#f59e0b', fontWeight: 900, fontSize:'2rem', display:'flex', alignItems:'center', gap:10, justifyContent:'center' }}><span style={{fontSize:32}}>🎉</span> ¡Bienvenido/a a la comunidad!</h2>
-        <p style={{ color: '#64748b', marginTop: 18 }}>Tu comunidad fue creada correctamente.<br />Serás redirigido al dashboard en segundos...</p>
-        {saveStatus.success === true && (
-          <div style={{ color: '#10b981', fontWeight: 700, marginTop: 18 }}>
-            ✔ Comunidad guardada en Supabase correctamente.
-          </div>
-        )}
-        {saveStatus.success === false && (
-          <div style={{ color: '#ef4444', fontWeight: 700, marginTop: 18 }}>
-            ❌ Error al guardar en Supabase: {saveStatus.error}
-          </div>
-        )}
+        <span style={{ fontSize: 54, color: '#f59e0b', marginBottom: 16 }}>{heyJackEmoji}</span>
+        <h2 style={{ color: '#f59e0b', fontWeight: 900, fontSize:'2rem', display:'flex', alignItems:'center', gap:10, justifyContent:'center' }}><span style={{fontSize:32}}>{heyJackEmoji}</span> ¡Hey-Jack se ocupa del resto!</h2>
+        {comicBubble('¡Listo! Ahora Hey-Jack te va a contactar por WhatsApp para ayudarte a organizar la colecta, enviar recordatorios y motivar a todos. ¡Chequeá tu WhatsApp!')}
+        <a href="https://wa.me/549XXXXXXXXXX?text=¡Hola%20Hey-Jack!%20Acabo%20de%20crear%20una%20colecta" target="_blank" rel="noopener noreferrer" style={{ display:'inline-block', marginTop: 16, background: 'linear-gradient(90deg,#6366f1 0%,#f59e0b 100%)', color: '#fff', borderRadius: 10, padding: '14px 28px', fontWeight: 900, fontSize: 18, textDecoration: 'none', boxShadow: '0 2px 12px 0 rgba(99,102,241,0.12)' }}>
+          Escribirle a Hey-Jack por WhatsApp
+        </a>
       </div>
     );
   }
 
-  // Paso 1: Datos de la comunidad
+  // Paso 1: Datos de la colecta
   if (step === 1 && !desdeInvitacion) {
-    window.dispatchEvent(new CustomEvent('stepwizard-step', { detail: { step: 1 } }));
+    // El evento se dispara en useEffect más abajo
     return (
       <div style={{ ...estiloPaso, boxShadow: '0 8px 32px 0 rgba(99,102,241,0.16)', border: 'none', background: '#fff', position: 'relative' }}>
-        <span style={{ position: 'absolute', left: 22, top: 22, fontSize: 38, color: '#6366f1' }}>🎓</span>
-        <h2 style={{...tituloPaso, display:'flex', alignItems:'center', gap:10}}><span style={{fontSize:32}}>🎓</span> Paso 1: Datos de la comunidad</h2>
+        <span style={{ position: 'absolute', left: 22, top: 22, fontSize: 38, color: '#6366f1' }}>{heyJackEmoji}</span>
+        <h2 style={{...tituloPaso, display:'flex', alignItems:'center', gap:10}}><span style={{fontSize:32}}>{heyJackEmoji}</span> ¿A quién vamos a sorprender?</h2>
+        {comicBubble('Contame para quién es la colecta y cuándo es el evento. ¡Yo me encargo del resto!')}
+
         <label style={estiloLabel}>¿A qué corresponde la comunidad?
           <select name="tipoComunidad" value={form.tipoComunidad} onChange={e => setForm({ ...form, tipoComunidad: e.target.value })} style={estiloInput} required>
             <option value="">Seleccionar...</option>
@@ -252,14 +310,16 @@ function StepWizardInner({ onFinish }) {
     );
   }
 
-  // Paso 2: Datos personales
+  // Paso 2: Tus datos
   if (step === 2) {
-    window.dispatchEvent(new CustomEvent('stepwizard-step', { detail: { step: 2 } }));
+    // El evento se dispara en useEffect más abajo
     const camposBloqueados = desdeInvitacion;
     return (
       <div style={{ ...estiloPaso, boxShadow: '0 8px 32px 0 rgba(99,102,241,0.16)', border: 'none', background: '#fff', position: 'relative' }}>
-        <span style={{ position: 'absolute', left: 22, top: 22, fontSize: 38, color: '#3b82f6' }}>👤</span>
-        <h2 style={{...tituloPaso, display:'flex', alignItems:'center', gap:10}}><span style={{fontSize:32}}>👤</span> Paso 2: Tus datos</h2>
+        <span style={{ position: 'absolute', left: 22, top: 22, fontSize: 38, color: '#3b82f6' }}>{heyJackEmoji}</span>
+        <h2 style={{...tituloPaso, display:'flex', alignItems:'center', gap:10}}><span style={{fontSize:32}}>{heyJackEmoji}</span> ¿Quiénes se suman a la misión?</h2>
+        {comicBubble('Organizá colectas, cumpleaños y regalos por WhatsApp. Hey Jack se encarga de todo.')}
+
         {/* Datos de comunidad precargados y bloqueados si viene desde invitación */}
         {camposBloqueados && (
           <div style={{ marginBottom: 18, background: '#f1f5f9', borderRadius: 8, padding: 14 }}>
@@ -317,43 +377,25 @@ function StepWizardInner({ onFinish }) {
 
   // Paso 3: Compartir link
   if (step === 3) {
-    window.dispatchEvent(new CustomEvent('stepwizard-step', { detail: { step: 3 } }));
-    // Generar link único si no existe
-    if (!link) {
-      const id = generarIdUnico({
-        institucion: form.institucion.trim(),
-        sala: form.sala.trim(),
-        division: form.division.trim(),
-      });
-      // Agrega nombrePadre como query param
-      const nombrePadreParam = encodeURIComponent(form.nombrePadre);
-      setLink(window.location.origin + '/comunidad/' + id + `?nombrePadre=${nombrePadreParam}`);
-      setComunidadId(id);
-    }
     return (
       <div style={{ ...estiloPaso, boxShadow: '0 8px 32px 0 rgba(59,130,246,0.16)', border: 'none', background: '#fff', position: 'relative', textAlign: 'center', padding: 32 }}>
-        <span style={{ fontSize: 54, color: '#10b981', marginBottom: 16 }}>🔗</span>
-        <h2 style={{ color: '#10b981', fontWeight: 900, fontSize:'2rem', display:'flex', alignItems:'center', gap:10, justifyContent:'center' }}><span style={{fontSize:32}}>🔗</span> ¡Comparte el link con los miembros!</h2>
-        <p style={{ color: '#64748b', marginTop: 18 }}>Este es el link único para invitar a otros a tu comunidad:</p>
+        <span style={{ fontSize: 54, color: '#10b981', marginBottom: 16 }}>{heyJackEmoji}</span>
+        <h2 style={{ color: '#10b981', fontWeight: 900, fontSize:'2rem', display:'flex', alignItems:'center', gap:10, justifyContent:'center' }}><span style={{fontSize:32}}>{heyJackEmoji}</span> Compartí el link</h2>
+        {comicBubble('Enviá este link al grupo de WhatsApp. Cuando se sumen, yo los contacto y me encargo de los recordatorios y la motivación.')}
         <input type="text" value={link} readOnly style={{ width: '100%', marginTop: 12, marginBottom: 12, padding: 8, borderRadius: 6, border: '1px solid #ccc', fontSize: '1.1rem' }} />
         <div style={{ marginBottom: 18 }}>
           <button style={{ ...estiloBtnPrincipal, marginRight: 12 }} onClick={() => { navigator.clipboard.writeText(link); }}>Copiar link</button>
           <a href={`https://wa.me/?text=${encodeURIComponent(link)}`} target="_blank" rel="noopener noreferrer" style={{ ...estiloBtnPrincipal, background: '#25D366', color: '#fff' }}>Compartir por WhatsApp</a>
         </div>
         <button style={estiloBtnPrincipal} onClick={() => setFinalizado(true)}>
-          Finalizar y ver miembros
+          Finalizar y ver instrucciones
         </button>
       </div>
     );
   }
 }
 
-
 const estiloPaso = {
-  maxWidth: 480,
-  width: '100%',
-  margin: '40px auto',
-  background: '#fff',
   borderRadius: 24,
   boxShadow: '0 8px 32px 0 rgba(99,102,241,0.14)',
   padding: '52px 40px 36px 40px',

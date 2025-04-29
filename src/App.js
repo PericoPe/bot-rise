@@ -28,12 +28,16 @@ import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-route
 import StepWizard from './StepWizard';
 import Dashboard from './Dashboard';
 import BienvenidaMiembro from './BienvenidaMiembro';
+import InvitacionComunidad from './InvitacionComunidad';
 import Miembros from './Miembros';
 import Login from './Login';
 import { requireAuth } from './auth';
 
+import FooterLegal from './FooterLegal';
+
 function Landing() {
   const navigate = useNavigate();
+
   const handleCrearComunidad = async (e) => {
     e.preventDefault();
     // Si no está autenticado, redirige a login y luego vuelve
@@ -42,7 +46,9 @@ function Landing() {
   };
   return (
     <>
-      <div style={{ fontFamily: 'sans-serif', background: '#f8fafc', minHeight: '100vh' }}>
+      <div style={{ fontFamily: 'Inter, Rubik, sans-serif', background: 'linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%)', minHeight: '100vh', overflowX: 'hidden', position: 'relative' }}>
+        {/* Fondo animado sutil */}
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0, pointerEvents: 'none', background: 'radial-gradient(circle at 70% 30%, #6366f1 0%, transparent 60%), radial-gradient(circle at 20% 80%, #3b82f6 0%, transparent 70%)', opacity: 0.12 }} />
         {/* Header fijo */}
         <header style={{
           position: 'fixed',
@@ -58,7 +64,7 @@ function Landing() {
           padding: '0 12px',
           height: 64
         }}>
-          <span style={{ fontWeight: 900, fontSize: 26, color: '#6366f1', letterSpacing: '-1px' }}>bot-rise</span>
+          <span style={{ fontWeight: 900, fontSize: 30, color: '#6366f1', letterSpacing: '-1px', display: 'flex', alignItems: 'center', gap: 8 }}>🦸‍♂️ Hey-Jack</span>
           <button
             onClick={() => navigate('/dashboard')}
             style={{
@@ -76,6 +82,7 @@ function Landing() {
               whiteSpace: 'nowrap',
               overflow: 'hidden',
               textOverflow: 'ellipsis',
+              marginRight: 16
             }}
             onMouseOver={e => { e.target.style.background = '#6366f1'; e.target.style.color = '#fff'; }}
             onMouseOut={e => { e.target.style.background = '#fff'; e.target.style.color = '#6366f1'; }}
@@ -97,16 +104,35 @@ function Landing() {
         </header>
         <div style={{ height: 64 }} />
         {/* CTA Hero */}
-        <section style={{ background: 'linear-gradient(90deg, #6366f1 0%, #3b82f6 100%)', color: '#fff', padding: '60px 20px 40px 20px', textAlign: 'center' }}>
-          <h1 style={{ fontSize: '3rem', margin: 0, fontWeight: 800, letterSpacing: '-1px' }}>bot-rise</h1>
-          <p style={{ fontSize: '1.5rem', margin: '20px 0 30px 0' }}>
-            Gestiona y descubre comunidades de manera fácil y moderna.
+        <section style={{ background: 'linear-gradient(90deg, #6366f1 0%, #f59e0b 100%)', color: '#fff', padding: '60px 20px 40px 20px', textAlign: 'center' }}>
+          <h1 style={{ fontSize: '3.2rem', margin: 0, fontWeight: 900, letterSpacing: '-1px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
+            🦸‍♂️ Hey-Jack
+          </h1>
+          <p style={{ fontSize: '1.5rem', margin: '22px 0 32px 0', fontWeight: 600 }}>
+            Organizá colectas, cumpleaños y regalos por WhatsApp. Hey Jack se encarga de todo.
           </p>
           <div style={{ display: 'flex', justifyContent: 'center', gap: 20, marginTop: 20 }}>
-            <button onClick={handleCrearComunidad} style={{ background: '#fff', color: '#6366f1', padding: '12px 32px', borderRadius: '32px', fontWeight: 700, fontSize: '1.1rem', border: 'none', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
-              Crear una comunidad
-            </button>
-            <a href="#comunidades" style={{ background: 'transparent', color: '#fff', padding: '12px 32px', borderRadius: '32px', fontWeight: 700, fontSize: '1.1rem', border: '2px solid #fff', textDecoration: 'none', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
+            {/* Botón que inicia el onboarding por WhatsApp */}
+<button
+  onClick={handleCrearComunidad}
+  style={{
+    background: '#25D366',
+    color: '#fff',
+    padding: '14px 36px',
+    borderRadius: '32px',
+    fontWeight: 900,
+    fontSize: '1.15rem',
+    border: 'none',
+    cursor: 'pointer',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+    letterSpacing: '-0.5px',
+    textDecoration: 'none'
+  }}
+>
+  Crear una comunidad
+</button>
+{/* IMPORTANTE: El dashboard de comunidad debe existir y ser accesible por cualquier miembro para ver el estado de la colecta, miembros, progreso, etc. */}
+            <a href="#comunidades" style={{ background: 'transparent', color: '#fff', padding: '14px 36px', borderRadius: '32px', fontWeight: 700, fontSize: '1.1rem', border: '2px solid #fff', textDecoration: 'none', cursor: 'pointer', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
               Unirme a una comunidad
             </a>
           </div>
@@ -228,10 +254,12 @@ function Landing() {
         </section>
 
         {/* Footer */}
+        <FooterLegal />
       </div>
     </>
   );
 }
+
 
 function App() {
   return (
@@ -240,9 +268,10 @@ function App() {
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
         <Route path="/crear-comunidad" element={<StepWizard />} />
-        <Route path="/miembros/:id" element={<Miembros />} />
+        <Route path="/miembros" element={<Miembros />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/comunidad/:id" element={<BienvenidaMiembro />} />
+        <Route path="/bienvenida" element={<BienvenidaMiembro />} />
+        <Route path="/comunidad/:id" element={<InvitacionComunidad />} />
       </Routes>
     </Router>
   );

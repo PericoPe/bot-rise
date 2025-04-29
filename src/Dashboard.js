@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { footerLinks } from './footerTexts';
 
 export default function Dashboard() {
   // Mock data
@@ -20,25 +21,31 @@ export default function Dashboard() {
 
   const navigate = useNavigate();
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(90deg, #6366f1 0%, #3b82f6 100%)' }}>
-      {/* Header fijo igual a landing */}
-      <header style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        background: '#fff',
-        boxShadow: '0 2px 12px rgba(99,102,241,0.08)',
-        zIndex: 200,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 12px',
-        height: 64
-      }}>
-        <span style={{ fontWeight: 900, fontSize: 26, color: '#6366f1', letterSpacing: '-1px' }}>bot-rise</span>
+    <React.Fragment>
+      <div style={{ minHeight: '100vh', background: 'linear-gradient(120deg, #f8fafc 0%, #e0e7ff 100%)', fontFamily: 'Inter, Rubik, sans-serif', overflowX: 'hidden', position: 'relative' }}>
+        {/* Fondo decorativo animado */}
+        <div style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 0, pointerEvents: 'none', background: 'radial-gradient(circle at 70% 30%, #6366f1 0%, transparent 60%), radial-gradient(circle at 20% 80%, #10b981 0%, transparent 70%)', opacity: 0.10 }} />
+        {/* Header fijo igual a landing */}
+        <header style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100%',
+          background: '#fff',
+          boxShadow: '0 2px 12px rgba(99,102,241,0.08)',
+          zIndex: 200,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '0 12px',
+          height: 64
+        }}>
+          <span style={{ fontWeight: 900, fontSize: 26, color: '#6366f1', letterSpacing: '-1px' }}>bot-rise</span>
         <button
-          onClick={() => navigate('/')}
+          onClick={() => {
+            // Solo navega a la landing (sin supabase)
+            navigate('/');
+          }}
           style={{
             background: '#fff',
             color: '#6366f1',
@@ -187,6 +194,47 @@ export default function Dashboard() {
       </div>
         </div>
       </div>
+    </React.Fragment>
+  );
+}
+
+// FooterLegal: footer fijo con enlaces legales y modal
+function FooterLegal() {
+  const [modal, setModal] = useState(null);
+  return (
+    <>
+      <footer style={{
+        position: 'fixed', bottom: 0, left: 0, width: '100%', background: '#f8fafc', borderTop: '1px solid #e0e7ef',
+        display: 'flex', justifyContent: 'center', gap: 24, padding: '12px 0', zIndex: 500, fontSize: 15, color: '#6366f1',
+        boxShadow: '0 -2px 12px rgba(99,102,241,0.03)', flexWrap: 'wrap'
+      }}>
+        {footerLinks.map(link => (
+          <button
+            key={link.key}
+            onClick={() => setModal(link)}
+            style={{ background: 'none', border: 'none', color: '#6366f1', cursor: 'pointer', padding: 0, fontWeight: 600 }}
+          >
+            {link.label}
+          </button>
+        ))}
+      </footer>
+      {modal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: 'rgba(30,41,59,0.25)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 999
+        }} onClick={() => setModal(null)}>
+          <div style={{
+            background: '#fff', borderRadius: 14, boxShadow: '0 8px 32px 0 rgba(99,102,241,0.16)',
+            padding: 32, maxWidth: 440, width: '90vw', position: 'relative', color: '#334155',
+            fontSize: 16, lineHeight: 1.6
+          }} onClick={e => e.stopPropagation()}>
+            <h3 style={{ color: '#6366f1', fontWeight: 900, fontSize: 22, marginBottom: 16 }}>{modal.label}</h3>
+            <div style={{ whiteSpace: 'pre-line' }}>{modal.content}</div>
+            <button style={{ position: 'absolute', top: 10, right: 18, background: 'none', border: 'none', color: '#64748b', fontSize: 20, cursor: 'pointer' }} onClick={() => setModal(null)}>&#10005;</button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

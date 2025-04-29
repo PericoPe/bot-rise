@@ -1,38 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { supabase } from './supabaseClient';
+import React from 'react';
+
 
 function ListaComunidades() {
-  const [comunidades, setComunidades] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  useEffect(() => {
-    async function fetchComunidades() {
-      const { data, error } = await supabase
-        .from('communities')
-        .select('*');
-      if (error) {
-        setError(error.message);
-        setComunidades([]);
-      } else {
-        setComunidades(data);
-        setError(null);
-      }
-      setLoading(false);
-    }
-    fetchComunidades();
-  }, []);
-
-  if (loading) return <div>Cargando comunidades...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (comunidades.length === 0) return <div>No hay comunidades registradas.</div>;
+  // MOCK: comunidades de ejemplo
+  const comunidades = [
+    { nombre: 'Padres 2025', estado: 'activa' },
+    { nombre: 'Familia Jardín', estado: 'activa' },
+    { nombre: 'Fútbol Amigos', estado: 'inactiva' },
+  ];
 
   return (
     <div>
       <h2>Comunidades</h2>
       <ul>
         {comunidades.map(c => (
-          <li key={c.id}>{c.nombre}</li>
+          <li key={c.nombre}>{c.nombre}</li>
         ))}
       </ul>
     </div>

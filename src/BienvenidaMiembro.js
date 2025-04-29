@@ -1,63 +1,42 @@
 import React from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { requireAuth } from './auth';
-import { supabase } from './supabaseClient';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-import { useEffect } from 'react';
-
 export default function BienvenidaMiembro() {
   const navigate = useNavigate();
   const { id } = useParams();
   const query = useQuery();
-  const institucion = query.get('institucion') || '';
-  const sala = query.get('sala') || '';
-  const division = query.get('division') || '';
+  const [institucion, setInstitucion] = React.useState(query.get('institucion') || '');
+  const [sala, setSala] = React.useState(query.get('sala') || '');
+  const [division, setDivision] = React.useState(query.get('division') || '');
   // Mejor fallback: si no está en la query, muestra 'El organizador/a'
-  const nombrePadre = query.get('nombrePadre') || localStorage.getItem('nombrePadre') || 'El organizador/a';
+  const [nombrePadre, setNombrePadre] = React.useState(query.get('nombrePadre') || localStorage.getItem('nombrePadre') || 'El organizador/a');
 
 
 
-  const handleUnirme = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      // Redirige a login y guarda la ruta y parámetros originales
-      navigate('/login', {
-        state: {
-          from: {
-            pathname: '/crear-comunidad',
-            state: {
-              pasoInicial: 2,
-              institucion,
-              sala,
-              division,
-              nombrePadre,
-              desdeInvitacion: true
-            }
-          }
-        }
-      });
-    } else {
-      navigate('/crear-comunidad', {
-        state: {
-          pasoInicial: 2,
-          institucion,
-          sala,
-          division,
-          nombrePadre,
-          desdeInvitacion: true
-        }
-      });
-    }
+  // Ya no redirige automáticamente. El usuario siempre ve la bienvenida y debe hacer click en 'Unirme'.
+  const handleUnirme = () => {
+    navigate('/crear-comunidad', {
+      state: {
+        pasoInicial: 2,
+        institucion,
+        sala,
+        division,
+        nombrePadre,
+        desdeInvitacion: true
+      }
+    });
   };
 
 
 
+
   return (
-    <div style={{ minHeight: '100vh', background: 'linear-gradient(90deg, #6366f1 0%, #3b82f6 100%)' }}>
+    <div style={{ minHeight: '100vh', background: 'linear-gradient(90deg, #6366f1 0%, #3b82f6 100%)', fontFamily: 'sans-serif' }}>
       {/* Header fijo igual a landing */}
       <header style={{
         position: 'fixed',
@@ -86,52 +65,55 @@ export default function BienvenidaMiembro() {
             padding: '10px 18px',
             boxShadow: '0 2px 12px rgba(99,102,241,0.12)',
             cursor: 'pointer',
-            transition: 'background .15s, color .15s',
-            maxWidth: '100vw',
-            whiteSpace: 'nowrap',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
+            marginRight: 16
           }}
-          onMouseOver={e => { e.target.style.background = '#6366f1'; e.target.style.color = '#fff'; }}
-          onMouseOut={e => { e.target.style.background = '#fff'; e.target.style.color = '#6366f1'; }}
         >
           Ingresar
         </button>
-        <style>{`
-          @media (max-width: 700px) {
-            header {
-              padding: 0 2vw !important;
-            }
-            header button {
-              font-size: 0.92rem !important;
-              padding: 7px 10px !important;
-              min-width: 80px;
-            }
-            .bienvenida-card {
-              padding: 18px 6px !important;
-              font-size: 1.01rem !important;
-            }
-            .bienvenida-title {
-              font-size: 1.3rem !important;
-              margin-top: 18px !important;
-            }
-          }
-        `}</style>
       </header>
       <div style={{ height: 64 }} />
-      <div style={{ minHeight: 'calc(100vh - 64px)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ maxWidth: 480, width: '100%', background: '#fff', borderRadius: 24, boxShadow: '0 8px 32px 0 rgba(99,102,241,0.16)', padding: '52px 40px 36px 40px', textAlign: 'center', position: 'relative' }}>
-          <span style={{ position: 'absolute', left: 22, top: 22, fontSize: 32 }}>🎁</span>
-          <h2 style={{ color: '#3b82f6', fontWeight: 900, fontSize: '2rem', marginBottom: 18, letterSpacing: '-1px' }}>¡Te invitaron a una comunidad!</h2>
-          <p style={{ color: '#6366f1', fontWeight: 600, fontSize: '1.15rem', marginBottom: 24 }}>
-            <b>{nombrePadre}</b> te está invitando a participar de la comunidad de <b>{institucion}</b>, sala o grado <b>{sala}</b> y división <b>{division}</b>.<br />
-            Es para agilizar y simplificar los regalos grupales, colectas y la organización.
-          </p>
-          <button onClick={handleUnirme} style={{ background: 'linear-gradient(90deg, #6366f1 0%, #3b82f6 100%)', color: '#fff', border: 'none', borderRadius: 32, padding: '14px 38px', fontWeight: 800, fontSize: '1.13rem', cursor: 'pointer', boxShadow: '0 2px 12px rgba(99,102,241,0.09)', marginTop: 18 }}>
-            Unirme a la comunidad
-          </button>
+      <main style={{ maxWidth: 480, margin: '0 auto', background: '#fff', borderRadius: 24, boxShadow: '0 8px 32px 0 rgba(99,102,241,0.14)', padding: '48px 32px 36px 32px', marginTop: 48, textAlign: 'center' }}>
+        <span style={{ fontSize: 52, color: '#6366f1', marginBottom: 16 }}>🤝</span>
+        <h1 style={{ color: '#3b82f6', fontWeight: 900, fontSize: '2rem', marginBottom: 10 }}>¡Te invitaron a una comunidad en bot-rise!</h1>
+        <p style={{ color: '#64748b', fontSize: '1.15rem', margin: '18px 0 28px 0' }}>
+          bot-rise es la forma más fácil y moderna de organizar comunidades de padres, amigos o grupos para gestionar aportes, regalos y comunicación.<br /><br />
+          <b>¿Qué podés hacer?</b>
+          <ul style={{ textAlign: 'left', margin: '18px auto', maxWidth: 340, color: '#334155', fontSize: '1rem' }}>
+            <li>Sumarte a una comunidad exclusiva</li>
+            <li>Ver y contactar a otros miembros</li>
+            <li>Recibir recordatorios y novedades</li>
+            <li>Participar en regalos grupales</li>
+          </ul>
+        </p>
+        <div style={{ background: '#f1f5f9', borderRadius: 14, padding: 18, margin: '18px 0', color: '#334155', fontSize: '1.07rem', textAlign: 'left', boxShadow: '0 2px 8px rgba(99,102,241,0.07)' }}>
+          <div><b>Institución:</b> {institucion || <span style={{ color: '#cbd5e1' }}>No especificada</span>}</div>
+          <div><b>Sala:</b> {sala || <span style={{ color: '#cbd5e1' }}>No especificada</span>}</div>
+          <div><b>División:</b> {division || <span style={{ color: '#cbd5e1' }}>No especificada</span>}</div>
+          <div><b>Organizador/a:</b> {nombrePadre || <span style={{ color: '#cbd5e1' }}>No especificado</span>}</div>
         </div>
-      </div>
+        <button
+          style={{
+            marginTop: 32,
+            background: 'linear-gradient(90deg, #6366f1 0%, #3b82f6 100%)',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 32,
+            fontWeight: 700,
+            fontSize: '1.15rem',
+            padding: '14px 38px',
+            boxShadow: '0 2px 12px rgba(99,102,241,0.12)',
+            cursor: 'pointer',
+            transition: 'background .15s, color .15s',
+            marginBottom: 10
+          }}
+          onClick={handleUnirme}
+        >
+          Unirme a la comunidad
+        </button>
+        <p style={{ color: '#64748b', fontSize: '0.98rem', marginTop: 18 }}>
+          ¿Ya tenés cuenta? Ingresá y sumate con tus datos.<br />¿Nuevo? Solo necesitás un email para sumarte.
+        </p>
+      </main>
     </div>
   );
 }

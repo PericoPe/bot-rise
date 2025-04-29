@@ -1,15 +1,11 @@
-import { supabase } from './supabaseClient';
+
 
 export async function getCurrentUser() {
-  const { data: { session } } = await supabase.auth.getSession();
-  return session?.user || null;
+  // MOCK: simula usuario logueado
+  return { id: 'mock-user', email: 'mock@user.com' };
 }
 
 export async function requireAuth(navigate, from) {
-  const user = await getCurrentUser();
-  if (!user) {
-    navigate('/login', { state: { from } });
-    return false;
-  }
+  // MOCK: siempre permite
   return true;
 }
